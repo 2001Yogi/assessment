@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Slider</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px;
+    }
+    #slider-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #slider {
+      width: 300px;
+      height: 300px;
+      margin-bottom: 20px;
+      border: 2px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    #slider img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+    #thumbnails {
+      display: flex;
+      gap: 10px;
+    }
+    #thumbnails img {
+      width: 100px;
+      height: 80px;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+    #thumbnails img.selected {
+      border-color: blue;
+    }
+    .arrow {
+      cursor: pointer;
+      font-size: 24px;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Slider container with arrows -->
+  <div id="slider-container">
+    <span class="arrow" id="leftArrow">&#9664;</span>
+    <div id="slider">
+      <img id="mainImage" src="" alt="Selected Image" />
+    </div>
+    <span class="arrow" id="rightArrow">&#9654;</span>
+  </div>
+
+  <!-- Thumbnails container -->
+  <div id="thumbnails"></div>
+
+  <script>
+    // Image array containing image URLs
+    const images = [
+      'image1.jpg',
+      'image2.jpg',
+      'image3.jpg',
+      'image4.jpg',
+      'image5.jpg',
+    ];
+
+    // References to DOM elements
+    const mainImage = document.getElementById('mainImage');
+    const thumbnailsContainer = document.getElementById('thumbnails');
+    const leftArrow = document.getElementById('leftArrow');
+    const rightArrow = document.getElementById('rightArrow');
+
+    let currentIndex = 0; // Tracks the current image index
+
+    // Function to create a thumbnail element
+    function createThumbnail(imageSrc, index) {
+      const thumbnail = document.createElement('img'); // Create img element
+      thumbnail.src = imageSrc; // Set image source
+      thumbnail.alt = `Thumbnail ${index + 1}`;
+
+      // Add click event listener to update the main image
+      thumbnail.addEventListener('click', () => {
+        updateMainImage(imageSrc, index);
+      });
+
+      // Append thumbnail to the container
+      thumbnailsContainer.appendChild(thumbnail);
+    }
+
+    // Function to update the main image
+    function updateMainImage(src, index) {
+      mainImage.src = src; // Update the main image source
+      currentIndex = index; // Update the current index
+
+      // Highlight the selected thumbnail
+      document.querySelectorAll('#thumbnails img').forEach((img) => {
+        img.classList.remove('selected');
+      });
+      thumbnailsContainer.children[index].classList.add('selected');
+    }
+
+    // Function to navigate images using arrows
+    function navigateImage(direction) {
+      currentIndex += direction;
+      if (currentIndex < 0) {
+        currentIndex = images.length - 1; // Wrap to the last image
+      } else if (currentIndex >= images.length) {
+        currentIndex = 0; // Wrap to the first image
+      }
+      updateMainImage(images[currentIndex], currentIndex);
+    }
+
+    // Function to initialize the slider
+    function initializeSlider() {
+      // Create thumbnails dynamically
+      images.forEach((imageSrc, index) => {
+        createThumbnail(imageSrc, index);
+      });
+
+      // Set the first image as default
+      if (images.length > 0) {
+        updateMainImage(images[0], 0);
+      }
+
+      // Attach event listeners for arrows
+      leftArrow.addEventListener('click', () => navigateImage(-1));
+      rightArrow.addEventListener('click', () => navigateImage(1));
+    }
+
+    // Initialize slider on page load
+    initializeSlider();
+  </script>
+</body>
+</html>
